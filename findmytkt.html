@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find My Tickets</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .find-tickets-container {
+            max-width: 500px;
+            margin: 80px auto;
+            padding: 30px;
+            border: 1px solid #ccc;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background-color: #fff;
+        }
+
+        .find-tickets-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .find-tickets-container label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: 600;
+        }
+
+        .find-tickets-container input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #aaa;
+            border-radius: 8px;
+        }
+
+        .find-tickets-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .find-tickets-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .ticket-results {
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="find-tickets-container">
+        <h2>Find My Tickets</h2>
+        <form id="ticket-form">
+            <label for="email">Enter Email or Booking ID:</label>
+            <input type="text" id="email" name="email" placeholder="example@mail.com or #123456" required>
+            <button type="submit">Search Tickets</button>
+        </form>
+
+        <div class="ticket-results" id="ticket-results">
+            <h3>Your Tickets</h3>
+            <p><strong>Event:</strong> Stand Up Comedy</p>
+            <p><strong>Date:</strong> April 5, 2025</p>
+            <p><strong>Venue:</strong> Guretha Town Hall</p>
+            <p><strong>Ticket ID:</strong> #123456</p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('ticket-form');
+        const resultBox = document.getElementById('ticket-results');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log('Form submitted!'); // Added for debugging
+
+            const input = document.getElementById('email').value;
+            const formData = new FormData();
+            formData.append('query', input);
+
+            try {
+                const response = await fetch('find_ticket.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Response from PHP:', data); // Added for debugging
+
+                if (data.status === 'success') {
+                    const t = data.ticket;
+                    resultBox.innerHTML = `
+                        <h3>Your Ticket</h3>
+                        <p><strong>Title:</strong> ${t.title}</p>
+                        <p><strong>Type:</strong> ${t.ticket_type}</p>
+                        <p><strong>Date:</strong> ${t.event_date}</p>
+                        <p><strong>Venue:</strong> ${t.venue}</p>
+                        <p><strong>Description:</strong> ${t.description}</p>
+                        <p><strong>Price:</strong> ₹${t.price}</p>
+                        <p><strong>Ticket ID:</strong> #${t.id}</p>
+                    `;
+                    resultBox.style.display = 'block';
+                } else {
+                    resultBox.innerHTML = `<p style="color:red;">${data.message}</p>`;
+                    resultBox.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('There was an error fetching the ticket:', error);
+                resultBox.innerHTML = `<p style="color:red;">An error occurred while fetching the ticket.</p>`;
+                resultBox.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

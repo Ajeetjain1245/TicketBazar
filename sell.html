@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell Tickets - TicketBazar</title>
+    <link rel="stylesheet" href="sell.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+</head>
+<script>
+    async function loadCountries() {
+        try {
+            const response = await fetch('https://countriesnow.space/api/v0.1/countries/positions');
+            const data = await response.json();
+    
+            const countrySelect = document.getElementById("country");
+            countrySelect.innerHTML = '<option value="">Select Country</option>';
+    
+            if (data && data.data) {
+                data.data.forEach(country => {
+                    const option = document.createElement('option');
+                    option.value = country.name;
+                    option.textContent = country.name;
+                    countrySelect.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error("Error loading countries:", error);
+        }
+    }
+    
+    async function populateStates() {
+        const country = document.getElementById("country").value;
+        const stateSelect = document.getElementById("state");
+        const citySelect = document.getElementById("city");
+    
+        stateSelect.innerHTML = '<option value="">Select State</option>';
+        citySelect.innerHTML = '<option value="">Select City</option>';
+    
+        if (!country) return;
+    
+        try {
+            const response = await fetch('https://countriesnow.space/api/v0.1/countries/states', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ country })
+            });
+            const data = await response.json();
+    
+            if (data && data.data && data.data.states) {
+                data.data.states.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state.name;
+                    option.textContent = state.name;
+                    stateSelect.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error("Error loading states:", error);
+        }
+    }
+    
+    async function populateCities() {
+        const country = document.getElementById("country").value;
+        const state = document.getElementById("state").value;
+        const citySelect = document.getElementById("city");
+    
+        citySelect.innerHTML = '<option value="">Select City</option>';
+    
+        if (!country || !state) return;
+    
+        try {
+            const response = await fetch('https://countriesnow.space/api/v0.1/countries/state/cities', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ country, state })
+            });
+            const data = await response.json();
+    
+            if (data && data.data) {
+                data.data.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error("Error loading cities:", error);
+        }
+    }
+    
+    // Call when page loads
+    loadCountries();
+    </script>
+    
+
+<body>
+    <header class="header">
+        <h1>Sell Your Event Tickets with Ease</h1>
+        <p>Get started by listing your event and reaching thousands of attendees!</p>
+    </header>
+
+    <section class="sell-form">
+        <div class="container">
+            <h2>Event Details</h2>
+            <form action="#" method="POST">
+                <label for="event-name">Event Name:</label>
+                <input type="text" id="event-name" name="event-name" required>
+
+                <label for="eventType">Choose Event Type:</label>
+                    <select id="eventType" name="eventType">
+                        <option value="cricket">Cricket</option>
+                        <option value="concert">Concert</option>
+                        <option value="standup">Stand-up Comedy</option>
+                        <option value="others">Others</option>
+                    </select>
+
+                <label for="event-date">Event Date:</label>
+                <input type="date" id="event-date" name="event-date" required>
+
+                <div class="location-selector">
+                    <label for="country">Country:</label>
+                    <select id="country" name="country" required onchange="populateStates()">
+                        <option value="">Select Country</option>
+                    </select>
+                
+                    <label for="state">State:</label>
+                    <select id="state" name="state" required onchange="populateCities()">
+                        <option value="">Select State</option>
+                    </select>
+                
+                    <label for="city">City:</label>
+                    <select id="city" name="city" required>
+                        <option value="">Select City</option>
+                    </select>
+                </div>
+                
+                
+
+                <label for="ticket-price">Ticket Price:</label>
+                <input type="number" id="ticket-price" name="ticket-price" required>
+
+                <label for="description">Event Description:</label>
+                <textarea id="description" name="description" rows="4" required></textarea>
+
+                <button type="submit" class="btn-sell">Submit Event</button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>&copy; 2025 TicketBazar. Sell your tickets hassle-free!</p>
+    </footer>
+</body>
+</html>

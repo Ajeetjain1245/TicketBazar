@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Veg Food & Drink Events - TicketBazar</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fffaf0;
+      color: #333;
+    }
+
+    .hero-section {
+      position: relative;
+      text-align: center;
+      color: white;
+    }
+
+    .hero-image {
+      width: 100%;
+      height: 60vh;
+      object-fit: cover;
+      filter: brightness(60%);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 2rem;
+    }
+
+    .hero-overlay h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-overlay p {
+      font-size: 1.2rem;
+    }
+
+    .events-section {
+      padding: 2rem;
+    }
+
+    .events-section h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: #2e7d32;
+    }
+
+    .filter-buttons {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .filter-buttons button {
+      margin: 0 10px;
+      padding: 8px 16px;
+      border: none;
+      background-color: #43a047;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .filter-buttons button:hover {
+      background-color: #2e7d32;
+    }
+
+    .event-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+
+    .event-card {
+
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      width: 300px;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .event-card:hover {
+      transform: scale(1.05);
+    }
+
+    .event-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .event-card-content {
+      padding: 1rem;
+    }
+
+    .event-card-content h3 {
+      margin-top: 0;
+      color: #388e3c;
+    }
+
+    .event-card-content p {
+      font-size: 0.95rem;
+    }
+
+    .countdown {
+      font-weight: bold;
+      background-color: #e8f5e9;
+      padding: 8px;
+      border-radius: 8px;
+      text-align: center;
+      color: #1b5e20;
+      margin-top: 10px;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 0.8rem;
+      padding: 0.5rem 1rem;
+      background-color: #43a047;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background-color: #2e7d32;
+    }
+
+    .map-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .map-container iframe {
+      width: 100%;
+      height: 300px;
+      border: none;
+      border-radius: 12px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <section class="hero-section">
+    <img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092" alt="Veg Food Event" class="hero-image">
+    <div class="hero-overlay">
+      <h1>Veg Food & Drink Events</h1>
+      <p>Celebrate health and taste at 100% vegetarian food festivals near you!</p>
+    </div>
+  </section>
+
+  <section class="events-section">
+    <h2>🌿 Upcoming Veg Events</h2>
+    <div class="filter-buttons">
+      <button onclick="filterEvents('all')">All</button>
+      <button onclick="filterEvents('snacks')">Snacks</button>
+      <button onclick="filterEvents('drinks')">Drinks</button>
+      <button onclick="filterEvents('healthy')">Healthy</button>
+    </div>
+
+    <div class="event-cards">
+
+     <div class="event-card" data-category="snacks" data-date="2025-04-28T10:00:00">
+
+        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMSEhAREBIQFRUVFRAVFRIWFRUQFhAVFRUWFxYVFRUYHSggGBolGxUVITEhJSkrLi4uFx8zODMtNygtLisBCgoKDg0OGxAQGislHyY3KzArKy0uLystLy0tLS0tLS0tMC0rLS0uLi0tLTUtLS0tLS0tLS0tLS0tMC0tLS0tLf/AABEIAPsAyQMBIgACEQEDEQH/xAAcAAACAwEBAQEAAAAAAAAAAAACAwEEBQYABwj/xABBEAACAQIEAggDBQYFAwUAAAABAgADEQQSITEFQQYTIlFhcYGRMqGxFEJSwdEjM2JygpIHFeHw8UOi4hZTo7LC/8QAGgEAAwEBAQEAAAAAAAAAAAAAAAECAwQFBv/EAC4RAAICAQQBAgMHBQAAAAAAAAABAhEDBBIhMVEiQRMjYQUygaHB0fAUUnGR4f/aAAwDAQACEQMRAD8A61N4yAm8ZPBMQWi4b7So2NpDQ1KY83UfnAC2kKKoVlYdhlb+UhvpG3gADwl2gMYSGAEmLjYDLACFMZFT14ANkxWYycxgAwQhE5jCDwAcIYiQ8YjykMaFhrIWNAmiGNpNLKSmonsNxKizdWK1Ev8AgFRC39t7zWI0aSSBPLCYTRDPT08J6UM5SHng2np5xkZHFahL2zUltlKrV+F9CTYcyTYX1KgGw1ihXrj/AKmGF76FXRV0sLMRrqSeXwgcyRrYmhnFrkEG4O9jttzBBIPgTKlDhrKpUEWtaweqgt4AlrbmMZTqVGdjnqYTKrWDN2GcXBujfdOViuZTo1PxNtfBE9WCdze5tYvrYOR3kAH1iqWANwWc2GU5czvcqbrdnY6A2OgGw13Bt1DBiBngZ6eiAYDJioQeABESMk9nk5hACMk9khTwgAISSEhSRAAQISwhJtKQw6bS0kpiPpHlLQz45/iB0wfE1amHpmp1COaKUqZZTjagOVyzAaoCbBedwfLi6SVTUan9iBawJpClUzKoBBYC910a99tAYdEdViMGKrAGjVCVLn92yYgs9/CzDXz7p9FocbwTYrEsXpLUph0SqHXJXpVFViA17Eq9/fzt6E5vEqjGzpx41L3H/wCFXTZuup4OrUqVKVXOKD1Ll6FRRmNFnPxKRtrpoPL7GDPy30BpM2LwSp8RxmFcC+oWjmeoT3DKR52PdP1ArycqSkYsblnskgGTeQI5grAdbC/6/lH2kWnAQZlSu1icpXc3KsQABfU5fL/YjaWL0GZKg01ORv0l1l74LoDoReAFWpidAVVjfXZhYd+3yg06+Y2yvte5UqPLWWXM8qxCBCQrQotmgBDSIQWEBAAAs9khkyM8AIyT2sINJgAOeGGkSCkAGCGIgNaMV4xjDJQwS08DLQHD9Ov8P2xDvicGUzvbrqDkqlcgaOCPhf2B3uNb8DT/AMPceagH2GpbuatTCg33z32t/vlPv1Jo5TOqGolFUUmcb0A6D/YmbEYhlfEMuUBL9Xh0O6U78z3+g5k92piIStJc3J2wssq8nrDEBpOaOxmbaCRHWgkTncaJaFERbmNeJIkUIBVhmFaLY30H/MQAMbwlWblLo21rs6g91r29bxWJ4DUVSwKtbWwuDbwmr0+RK6HTMmQxh00LEKoJJ2A5y6/A6/4B/cv6zOMJS6QqMueljF4GpSt1iFb7HQj3EUqxNNOmAEkNDKx9HhlV9VpsRyOig+9oKLfSAQrQodXh1VdDTf0Gb6QGpuvxK4HeVI+sHFrtAetIKyQYQiEAIamCVngZSGPptaWFaU1MdTeWmMtqZJilaGDLTAIGTmgz1o7GKtIeXa2HlZqc6JxTRpJFQiTkj8krYt7Dz59wnFLgxYqtUAv856nyI8xMTE48VH6qhci4zN3zdVbACZKTbaJjKzd485alRqqSNr2JGjC/1EX0ZxRLOjMTdQRck2sbG1/P5QsP+0wjpzXNb+ntD9Jk8Er5a1M95y/3Cw+dp3uXzIz81+xbdNGrwLB5atVjtTJUeZJ19h85SrcarF2yOQCTlWynTluJscbrinSqW0NQ28yRYn+0TE6P4fPVBOydo+f3fnr6QnFxaxxYN80jV49mNGnSsXqEgmy3+Edo6DTUgeswGwzqLsjgd5UgTax3SIKStJQ1vvHY+QG/nEUekrX7aKRzy3B+ZN4ZljnLmQNryHwXBKFNerawuVB1Gn3rc9dBF4rpDUJ/Z2UctAxPnfSP4/ilNCn1dsrNy00AOluWv0lfozQUs7sL5Atudib6+enzhTTWODr6hfNIZh+kLgMHCk27JtbXuYDlL3COKtWZlZVAC30vrqBbXzlLj7h6NCtlys2U25gMmbKTzsZHRP4qp8EHuT+kqMprKoOVoLd0ZGJsKlQLsHcAeAJtIBgVWuzHvJPzkK1pwPsQ6QwngZMBAgww0FhAqag2g3SLik3TDTGi9pcpVAec4mriXpVDm2mvg+IXF55k9Zmxvk99/ZmJxTizpL8oWWYtHHc47/Mj3x49fKVt8GMtDBcUdayXlatQlotK9erPomzzGZ1cWmRxXANWXKGKjmRzHdNetrFkTmkjCSTM3AcNp0VCovrzMc7RtQxS0mbRQT5C8zrwKqNPo5W7TqeYB9jb8/lMTEqadRgPuMbeh0/Ka/DsDVSojlbAHXUbEWOl/GU+k1LLWzfjUH1Gh+gnTtfwla6Fk+7Y7pLi8zoo2Cg+ra/S3vGqpo4Nm2aqRr/Cdv8AtB95jYOma1VFPMgE9yqNfkJ1PG8OXosqjVbEAfw8h6XmkU5bpii3K5HO8MxaU3zupaw0Gmh79Za4xxOnWC2RgwO5ttbbTxtKPDMRTVj1yZlI33KnvE12bAnXT/5B8pMItwq0TF2u0U8LSaph6gW5NNw4HeCCGA9rxfCOJdSxNrqwAI2OmxHz95v0DSo0mq0wchAbcknkLX85Uarg6vabKDzvmpn1toZfwqppqyqqueTP4xxXrsoVSqr37kny2mh0T2qnxT/9frMrjGKpnIlEAItzcC2Ym3fqdt5q8ApMMO7Adp8xXlsLD53igm8tvkUXcw6mBw1G3Wkkkc82vfYLJOGw9anUNFbFb2IBU3Avz3ErdLBpSbxce9j+RkdFKn71f5D9QfylbY79m1UXu9e0yUaNmoOCooHW1beyj0Jj6PDqDgrTcsRzDBrX2vbSci0uQdGLAMNhYkdxIkMJgIy+L4IOtxuJh4TFWOQ7zrDOV41hMlQOo85x6nEmrPa+zdQ2vhv8DYwtdQCDvI64TPo9oAiMsZxPG+mdz7PpFSpKr6ywwgMJ9Mz5tsrFYmoZZeVKkyZIeBwnWNr8I38fCBjePqnYoKptpmPw+gG/nH1WK4aqV3s3zsCfacvgSnWJ1nwX7Xl4+G06YLbFV2/cxyzcaSNA8fr/AIwPDKv6TVpV+tw5rVkWoVz2Hw6C19R5H2mjSpUyvYWmRysFt7gQHpg06lMJlGVgNFAOYG9rHv8AKbKDXbstQku3Zh4Di1JGZhRVOybWZmJNxproJXrcerMbh8o/CoGnvrMyjYsoOxIB8idZ22LwSNSamFUAKcthsQNCJnFSkuzGG6adPo57h6pXfJUurm5DrYZjuQy2tfxFpcr8EpU9alcgeQBPl3+0wsBWy1KTdzofS4vOl4pwbraocMFFrNzNxtYeX0hGNrq2EPVHq2Jq8RwxpChesVFrMAAdDfnb6Svh+EJVuaNcG24K2YeesDGYPCopArNnANtc+vcQo0mdwvEmnVpsO8A+Kk2MH36khOXqSlRqYrh1OgA1Vy5Pw01GTN5nU2ianHqxsEKoNgqqNB3a3lfj1ctXqX+6co8AP9bn1mkMR9lwqVaVLralQoLZsmrXPaexsoA7t/OFcuuEVH1SajwivXxFSph3aoSctRLXAFrhr7DxEPovWtVYE6FD8iD+su4mu9bBu1RVV7XKqxcDK99CQOQnMU6xW9uYIPkdDE+GpLkU3skmX8fiTXrEqCbkKg8OX6+s0uJYr7JTp4ejY1qpvf8ACo+OofLRR4kdxmLgMWaNQNl1FwVO/cR4GbuNwKVr4qjqzKobmSq3sLciLnT/AGU72ya7KwtO37meDCikaMnmmgLCU8fhw6kS6YuTOO6NGmLI4SUkclSxBpsUaXevh8d4bmBddxOczVPGce32Z9HCSyx3RPtRi3Mhmi2M9tnzguoYnLHlYt5mxDMNVGqN8LX3210IMxOIcAdSTS7a8hftD9Zq00zMBHivTBKCqARoVLLp6N+U6cNyjTXBE4RmvUceespH/qIf6kM3eB8cZmFOqb30V9jfuPfLnFcbSFJ1qOjEqbKLEk20sNbec5ThqlqtIDfOh9jcn2Bm1bXwcrvFNKLs9iBlZ1/CzD2JE7+lUzBW7wD7i85riXBBmq1XqqiFi3wlrXP6mPTpBRpoiAu+VVW4XLewtfUxwW27NMXym9/BztYZWYfhZh7G02ukfE2JWmpsuVWa33swuAfC1veZmJx1JmZhQ1YknM7WuTfZbSalKpXXrVUHLZGVQdAAMpA1J009JNcNI51Kk1Fmnwbgi1EFSoxsb2VdNAban0mJX7LOAdmYA+R0ljCPibdVS62xvoAQBffU/D7yxU6PVgQFykWFzcAA8x3wcbXCG1uitsX9SOP0iKmf7tQK4PiQLj319Za4VxpFp9VXUlRsQL6b2I8O+a64QGjTpVwCQFXS51A0IO+wmViuj9NdTXyL/EF+txHtd2jd45xlviW14rRqBqFJSMyVLGwUXyk7b3nO4CoBUpE7Z0v/AHCbXDMJhVdctbO9+yL5RfwAGvvKPGGSi5p06SCwU52vUJuOQbQfPaDiRk3NKUmjT6ScNvesg1HxjvH4vMc5mcEx70m0V2Q/EoBPqPGb/CcaGoU3dhexBLEC5BI1vEcZx2IpsoopQKkfE7PcEHUZFG1ra3hPbH1t0bfDUmpxdA8YwoFqi6ZjqLW1Ive3LylBTF/a67/v2pEclpoyAHvOZiTJUzzM0oym3Ho0Y2LcQ54iZCE1FuLGU/sAl6RIljjLs2x5541UWdQVEAySYDGd7ZIDmJYxjmU8agZHT8QI8riZyfAKm+S1hW7XoZg8T4LXapUdQpDMSO0Bpyve3KI4bxdgFDHXbXWxGh13Gom5jFJp3JILbeHvM8OuahWzn/P/AA6c/wBnxqpy4Rh0ejtc7hF82v8A/W8u1KtDADtE1K7iyUx8b+Cr91e9j/pK2Iw1V9HxWJI7lZaN/WmFMDB8NpUiTTQBjux7TN5sdTOuWqSXpR58MMIO0a+E6yphqorEGowcm2yki6qvgNvScnh7FkDXALKCRuATrOw4S+rDwHy/5nF4pMjun4WYexIm+F74Js5tZxtkdrS4BQXdS38zH6CwlvqerW1BKYJK3+4LX1Og1IF9PmJxtbpDXb74X+VQPmdZpdGcRVNRjU60qUPabMQCCNidNrzejTFqMTkowiavF+OLR7IGZ+69gv8AMfymGek1a97U7d2U2+syhiA9XPVJys+Z+ehOoHppNzH9IKLI1NaTEEWFwqBe4je1ocmL1Dnb37fCNHh/HEqK7soD00ZiN7rucp7rgXHlOaDviKq53F3NrnZfAD8pW4dWy1UvsSFYd6v2WHsTL+O6P1kJyDOvIi17eK9/lE0Q8s8sU6uuzbwfR3q3R+svlN7ZbX085znEK1RmzVbk6rmIyg5TysLc/nFria1FrZqiEfdNx/2nQia3FsV1+Fp1SO0r5WttqOXn2feFDcoTg1FU1zRQ4dw16+bJl0sCSbWv6TquJfBTDEZha/jpqR4XmF0Pr2qVF/EoP9p/8jLi8J6o1HAY5jqzOahIBNtWJNtZz6i1jaS7OjSJfD3L37AcQY200eG8PDC7TzIxcnSOlKzMQwpt1eGKAT3TFZhcgS5YpRVlODQDCDaNnpmQbTVIBqQKhii06myyXeKYyWMUxkNiMrG4NlbPSAIJJdOdz95b8/CaT4vrFS33VAttY87zzGLMw2VK0by1EpY9j/2QYJkmDGc5a4e1mHjcfKc30lp5cRU/iyt7jX5gzfpGxB7iDMzplROekygm6sugv8JuNv5p6OhdxaOTWq8N+Gv2NDgtbLhOsp00Z1zC1xTLENzextpLHB+IVqjMK6UkFrqqMznfW7GwOncJS6KUnFKqlRHUE3GYFb5lsbX8h7w6bkEEbiVqMssc14N9PL5UWczj6BpVHpn7pIHiOR9rTdwJwGUM2/MOWJB9NDNDH4GliQM3ZcaBha/l/EJl/wDpFr/vlt/Ib+151RlGStM4f6fLjm3CKkvqXqPG8MrolKmO0wBcKEAvpfvOsTxDpI9KrUphEIU2G4Ow3ld8HgsKb4isrMNQhNybd1JbsfnLS8To1V6w4Sqbk2zU6WYjk2rc5MskI9s6VDUOPLUX9DExuOqYqovZuQLKqA6C/P8AWdHS4QRhGo6F2u3hn0IF/wCkCU34xWtlw2EVP4qrKgX+infN7iFwyjUpu1arVNSo4sTsiqDcKibKB7zGeqxroePTKLbm7bOcw+Jek4ZSVZSeW3Iggzq+jfEnrisKhuRltoAAGBFtPL5xuMrUj2nw/WN4LTY+7ESg/FsQxCUMOtFNLvUK3A55aaaXtzv6SpajFXZGDTSxSvdx4LijW06XApZBOYRpdpYxhpeebhkk+Ttg0ma3FqlqZnI0j2ptV6uYWJma9Cx0nTNqjZtUMnoAaFmnAcxptEtCLQSZtZQtmgExjRZElsQsmATGlZoDBl6eGsDYlwzAXCg1LXJ/3tCMXLoDJhBZu18OiCsqIR+zNy2bk4sVJt592glOrhwaHW2JbN22JI1LEaC1iNvGVLC0OjPjnxzBTlVSwGlyQCfGwmlguGq60TY2YkMbkHZtALWI0GohpwpGZSobKy0yFv8ADmDEsx3tZfUmaY4ZY8xfYJM5U18W5GerRRbi60kNyO4s5PytLaCbeDwAR6HYZr2Y1b9kG7dm1rcvcypUwipWWmQ+W6gkgXa/NQOR9ZGSM5U5MHZSlbFYRH+Jb+pH0M6R+FKBUuu19mNqYFPMG111OljGYnhFHLUsGDKG7Ra4BVVa9v6rRrTzDazksLw+lT/d00XyA+sszoquDp0zUVUN+pr6tmIYBRrc21ueWljGYrAKHd0LZv2isDa1zRLC3y94f08vIbTmoaGblbhFPQKGBVgH1uW/Z57KDz0HvKxw4pYmkLAC9M23yk6bnex5yXgkuwoz5DLOjpI1NXVQ5ZQuiAEgs9QjcHSxWIx9L9jcXsBRI2sSb5iOYa5N5TwUrsNpgQ1MJkgWmAhkgi8hWks4G5EYAFJGWNEmIB2aQWgXkXlWBJMEmeJgO8QBS7RwdQoT2wpChRewYs4W1u7UzNzmX6HFyqZcoJ7ADXtojZlBHPmLyse2/UCJ+xVTueT3JfkjBWuSdgfpJHDqjWVLnsqzAsAAxLDTWxHZ3nsVxjOGAphbqy/Fe2ZgxO3hBpcXyhQE2FAfFv1TFu7neafKvtj4K7UqoTN2goJ52trlJt3X0vLGGwLMisjtmZahCgkH9mygDy1+kbiuJK1FwQod8gsCTorE6giw9Cb3iMLxIqgQLslZM1//AHCpva3LLCscX3xX8/IOCaeDqZd3DB3zAsFVMoU5r30Pa38YijQZ2IFrqNSWACgafF7TQ/zrtBur+8WsHIv2FW1wP4QZUw2P6uqauXfN2QSg1N7acvCKXw7VMOAWw1UqX1sdxmuzi+W+W92F7CebBVu1mPK5JcW1NrXvYm62t4R/+cmydjVWBFmIWwa4GTbwvDXjQBUilYBCmXOSCL6X015798dYv7n/AD8A4Ky4Gs2S1zmFgM2oBUsARfS4B0gPh6oqdUc2Y2Fs173Hf3WlunxiwW1MZgNWB+IhCinbSwO0T9tPWpVCjshRa+4AsdfHWJrH7NhwNo4Rlz1KmZgmU2VswfMNGzA7W5iJxKl+rqMdajMtgNFC5QAPeHisbnQoECrdLC98oVbAePnJo4tQlNWpZihYq2crqSDtbwEbcPup8frf7AW24cc7KtSqGClrsQM5zBU1U89RrrFYjDKq1LvUJV8oGmUsbkHfuEH/ADJQXZKeVmNyc5a5zBr2tpt84GKxucOMts1QPve1ltbb5y5PHXH6j4K1pDAc4SmZvHcSVWw5zlk1FWyG6VlTivGlpAhdTMfh7Vq75zcLLHDeEGs2Z9vGdBTohbIg0EmMm42zG3IdRuABGXjBTnurmlG4lXkxMkPJAZAcSbz0QhRkRpEgrABc9DySQsAAVYwT09ACwuCqFVcKcrEKpuNSTa1r6aiEOE1izKKZutr6rpcXGt9dJu8LxaJQpZyNqjDb7r7Dx1EdWqJepmYj9rS+E2JOWnYHwvvO2OnhtTv+UXtRzdPhFZr2pnQkHVRYjzMJOFVcpfIbC/MDbfQm86YVkDG+t61hY7HqxqfDQiUuI0GZEKupCdZn1tms3d6GEtPBK1bDajFqYJ1DFlICkBtRpe1ufiIkTpOLVlNPEAAXBpXN/iPZI9hp6TnQJjmxqEqQmqPAQgJ4CGBMxEZZPVwwsMLKSGIyTI4hQzuAdp0IEE0AdbScmPeqJkrRlLTIsF0Eu4ehaWBQ7pBQxrHXLBRSPZZ7LPaz2suijOYRZjZBmBIuEHkFYJEAGZpMVPQAbPRV568AGEwGaeCwskAOuwFEOAHwyoMo1OQ5vQaj1lfgz03unUoAigFzY3O2unOxO8PEYuhUC3r1FsLEKSt/MW1meuLRMNkRru/xb6A7/IAes9GU1FrlUr8cmliqlAq32jq1NMuSo01BJsLcprY7CKVok0lUmpTDBQDYE21IGx095h4SoGKpVdxT1uLmw0NrDXn4TafiNGmgVajP2lOt2IGYE627hM8Ti076/DsSLOWkz1KXVIMqg3yrzHLTxE5UNOk+24dWqVRUuzKARryHIW8BOZQRahp1179fkDGZoakwAI1RMEIJTGK0BRGqstIA1jAsALGKJSQz2WeyxgMLLKoYgrPZBH5JGSKhHOq0mKhq05CAp6enoARaRlEKCXG0AJyietPAyYAeno6lUUKwK3JvY91x+oHzjevp3H7PSxuO8m3+vvKUV5GVZ4R/Wp2rrubg7ZRcaD0vIOIS/wAGma5H8PNR63sYbV5AQWkSxTrJpdNbNfaxJII05W1HrJFVPwck7jsTc+otHtXkBAjUWPSon4PxcgL3vbTly7/1Om62GnfrYeOvzGm2njKUV5GLRI9VhF1IsFse/wALk/Q29J5ZVAGojVEBY5BLSGSEhinJURgE0SGK6qQUlgCetHQFaTHkSMghQHJuIMbFNOAzJDQw0XPQAbOe6R1mpsri9tLzcvMzpAt6RvAmXRa4fiOsphl1POW6b3nPdC21tyvtOixS2bSJ9bkTB8EkyM8XJEZoSTPCRJEACENBAEcsaGMEYsWsYJSAYDCVolYxJohj1MckCkJYSaIZ5YwGEsMCaIYIYyQ88wgyigwZNooybwEf/9k=" alt="Veg Snacks Fest">
+        <div class="event-card-content">
+          <h3>Veggie Fest 2025</h3>
+          <p>Paneer tikka to chaat – join the biggest veg snacks celebration in Jaipur.</p>
+          <div class="countdown" id="countdown">Loading countdown...</div>
+          <a href="buytkt.html" class="btn">Book Tickets</a>
+        </div>
+      </div>
+
+      <div class="event-card" data-category="drinks" data-date="2025-04-28T10:00:00">
+
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9M_Nr1zYr62rktLVJ9Wp8KvR1KBvE-WeSq7x9WE5AIPKdqXWUw6iOkNQIELG3qiSBgrU&usqp=CAU" alt="Green Leaf Bash">
+        <div class="event-card-content">
+          <h3>Green Leaf Bash</h3>
+          <p>Vegan delights, smoothie bars, and detox meals to nourish your body.</p>
+          <div class="countdown">Loading countdown...</div>
+          <a href="buytkt.html" class="btn">Book Tickets</a>
+        </div>
+      </div>
+
+      <div class="event-card" data-category="snacks" data-date="2025-04-28T10:00:00">
+
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFnumBkG6Hkx9ojrdC_VqznuP0jouTGbR6_3LM1w_ttTmYvZRPybSM_ok8-PWE5_uu74s&usqp=CAU" alt="Chaat Carnival">
+        <div class="event-card-content">
+          <h3>Chaat Carnival</h3>
+          <p>Experience India’s favorite street-side chaats with a modern twist.</p>
+          <div class="countdown">Loading countdown...</div>
+          <a href="buytkt.html" class="btn">Book Tickets</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="map-container">
+    <h2 style="text-align:center; color: #2e7d32;">📍 Event Location</h2>
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3559.853726019763!2d75.78694777528988!3d26.84968497669292!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db3a1d4bbf1f9%3A0x72ff8a2196885d84!2sAlbert%20Hall%20Museum!5e0!3m2!1sen!2sin!4v1713871178015!5m2!1sen!2sin"
+      allowfullscreen=""
+      loading="lazy">
+    </iframe>
+  </div>
+
+  <script>
+    function filterEvents(category) {
+      const cards = document.querySelectorAll('.event-card');
+      cards.forEach(card => {
+        card.classList.toggle('hidden', category !== 'all' && card.dataset.category !== category);
+      });
+    }
+  
+    function updateCountdowns() {
+      const now = new Date().getTime();
+      document.querySelectorAll('.event-card').forEach(card => {
+        const countdownEl = card.querySelector('.countdown');
+        const dateStr = card.getAttribute('data-date');
+        const eventTime = new Date(dateStr).getTime();
+        const diff = eventTime - now;
+  
+        if (diff <= 0) {
+          countdownEl.innerText = "🎉 Event is live!";
+          return;
+        }
+  
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+  
+        countdownEl.innerText = `⏳ Starts in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+      });
+    }
+  
+    setInterval(updateCountdowns, 1000);
+    updateCountdowns();
+  </script>
+  
+</body>
+</html>

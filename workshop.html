@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Workshops - TicketBazar</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f8;
+      color: #333;
+    }
+
+    .hero-section {
+      position: relative;
+      text-align: center;
+      color: white;
+    }
+
+    .hero-image {
+      width: 100%;
+      height: 60vh;
+      object-fit: cover;
+      filter: brightness(65%);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 2rem;
+    }
+
+    .hero-overlay h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-overlay p {
+      font-size: 1.2rem;
+    }
+
+    .events-section {
+      padding: 2rem;
+    }
+
+    .events-section h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: #ff5722;
+    }
+
+    .event-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+
+    .event-card {
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+      width: 280px;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .event-card:hover {
+      transform: scale(1.05);
+    }
+
+    .event-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .event-card-content {
+      padding: 1rem;
+    }
+
+    .event-card-content h3 {
+      margin-top: 0;
+      color: #e64a19;
+    }
+
+    .event-card-content p {
+      font-size: 0.95rem;
+    }
+
+    .event-card-content .btn {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.5rem 1rem;
+      background-color: #ff5722;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .event-card-content .btn:hover {
+      background-color: #e64a19;
+    }
+  </style>
+</head>
+<body>
+
+  <section class="hero-section">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR48szl3rrorWVnaUstl2R02neMJr5nvPLbVe_76yyJBwO7DPgPHbgMN77n1eqB-d3bg1k&usqp=CAU" alt="Workshop Banner" class="hero-image">
+    <div class="hero-overlay">
+      <h1>Upcoming Workshops</h1>
+      <p>Learn. Create. Grow – Find your next skill-building experience with us!</p>
+    </div>
+  </section>
+
+  <section class="events-section">
+    <h2>Explore Trending Workshops</h2>
+    <div class="event-cards">
+
+      <div class="event-card">
+        <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d" alt="Art Workshop">
+        <div class="event-card-content">
+          <h3>Creative Art & Painting</h3>
+          <p>Unleash your inner artist in this colorful hands-on workshop.</p>
+          <a href="joinnow.html" class="btn">Join Now</a>
+        </div>
+      </div>
+
+      <div class="event-card">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7Tcs0iXz3R3GIaT_M50G2VMuNycr6eeYT00ggpxRjKiBz_z_83pXT8d-MACKaokKQDcI&usqp=CAU" alt="Coding Workshop">
+        <div class="event-card-content">
+          <h3>Python Programming Bootcamp</h3>
+          <p>Master the basics of Python with real-world projects and guidance.</p>
+          <a href="register.html" class="btn">Register</a>
+        </div>
+      </div>
+
+      <div class="event-card">
+        <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad" alt="Digital Marketing">
+        <div class="event-card-content">
+          <h3>Digital Marketing Masterclass</h3>
+          <p>Build your online brand with powerful marketing techniques.</p>
+          <a href="enroll.html" class="btn">Enroll</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</body>
+</html>
