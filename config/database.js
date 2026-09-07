@@ -5,9 +5,11 @@ import mongoose from 'mongoose';
  * Establishes connection using the MONGODB_URI from environment variables
  */
 export const connectDB = async () => {
+  const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/ticketbazar';
+
   const connectWithRetry = async () => {
     try {
-      const conn = await mongoose.connect(process.env.MONGODB_URI);
+      const conn = await mongoose.connect(mongoUri);
       console.log(`MongoDB Connected: ${conn.connection.host}`);
     } catch (error) {
       console.error(`Error connecting to MongoDB: ${error.message}`);

@@ -218,7 +218,6 @@ const orderSchema = new mongoose.Schema(
  */
 orderSchema.index({ buyer: 1, status: 1 });
 orderSchema.index({ seller: 1, status: 1 });
-orderSchema.index({ orderNumber: 1 });
 orderSchema.index({ createdAt: -1 });
 orderSchema.index({ 'payment.razorpayOrderId': 1 });
 
