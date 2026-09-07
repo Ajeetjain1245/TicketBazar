@@ -169,12 +169,17 @@ export const verifyPayment = asyncHandler(async (req, res) => {
     razorpayOrderId,
     razorpayPaymentId,
     razorpaySignature,
+    orderId,
   } = req.body;
 
-  // Find order first
-  const order = await Order.findOne({
-    'payment.razorpayOrderId': razorpayOrderId,
-  });
+  // Find order first by razorpayOrderId or direct orderId
+  let order = null;
+  if (razorpayOrderId) {
+    order = await Order.findOne({ 'payment.razorpayOrderId': razorpayOrderId });
+  }
+  if (!order && orderId) {
+    order = await Order.findById(orderId);
+  }
 
   if (!order) {
     throw new AppError('Order not found', 404);
