@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, MapPin, User, CreditCard, Shield, CheckCircle, Clock, Package, Ticket, Star } from 'lucide-react';
 import { ordersAPI, reviewsAPI } from '../../utils/api';
 import { formatDate, formatCurrency } from '../../utils/helpers';
+import EscrowStepper from '../../components/EscrowStepper';
 import toast from 'react-hot-toast';
 
 const OrderDetails = () => {
@@ -103,6 +104,12 @@ const OrderDetails = () => {
         <ArrowLeft className="h-4 w-4 mr-2" />
         Back to Orders
       </Link>
+
+      {/* Escrow Visual Stepper */}
+      <EscrowStepper
+        orderStatus={order.status}
+        escrowStatus={order.escrowStatus || order.escrow?.status || (order.status === 'completed' ? 'released' : order.status === 'confirmed' ? 'held' : 'pending')}
+      />
 
       {/* Order Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

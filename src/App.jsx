@@ -10,7 +10,7 @@ import DashboardLayout from './components/layout/DashboardLayout';
 import AdminLayout from './components/layout/AdminLayout';
 
 // Pages
-import HomeNew from './pages/HomeNew';
+import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
@@ -80,7 +80,7 @@ function App() {
       <Routes>
       {/* Public Routes */}
       <Route element={<MainLayout />}>
-        <Route path="/" element={<HomeNew />} />
+        <Route path="/" element={<Home />} />
         <Route path="/tickets" element={<BrowseTickets />} />
         <Route path="/tickets/:id" element={<TicketDetails />} />
       </Route>

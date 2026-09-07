@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Events</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #2ecc71;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+            background-color: #ecf0f1;
+        }
+
+        .filters input, .filters select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .events-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .event-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .event-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .event-info {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .event-date, .event-location, .event-category {
+            margin: 5px 0;
+        }
+
+        .view-btn {
+            background-color: #2ecc71;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .view-btn:hover {
+            background-color: #108a12;
+            transform : scale(1.05);
+        }
+
+        .event-price {
+            margin-top: 5px;
+            font-weight: bold;
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>All Events</h1>
+    </header>
+
+    <div class="filters">
+        <input type="text" id="searchInput" placeholder="Search by name or location">
+        <input type="date" id="dateFilter">
+        <select id="categoryFilter">
+            <option value="">All Categories</option>
+            <option value="Music">Music</option>
+            <option value="Tech">Tech</option>
+            <option value="Art">Art</option>
+            <option value="Gaming">Gaming</option>
+            <option value="Business">Business</option>
+        </select>
+    </div>
+
+    <div class="events-container" id="eventsContainer"></div>
+
+    <script>
+        const exampleEvents = [
+            { title: "Music Fest 2025", date: "2025-05-25", location: "New Delhi", category: "Music" },
+            { title: "Tech Conference", date: "2025-06-15", location: "Pune", category: "Tech" },
+            { title: "Art & Culture Expo", date: "2025-07-10", location: "Jaipur", category: "Art" },
+            { title: "Gaming Carnival", date: "2025-08-20", location: "Gurgaon", category: "Gaming" },
+            { title: "Startup Summit", date: "2025-09-05", location: "Bangalore", category: "Business" },
+        ];
+
+        const container = document.getElementById('eventsContainer');
+        const searchInput = document.getElementById('searchInput');
+        const dateFilter = document.getElementById('dateFilter');
+        const categoryFilter = document.getElementById('categoryFilter');
+
+        let allEvents = [...exampleEvents]; // Initialize with example events
+
+        function displayEvents(filteredEvents) {
+            container.innerHTML = "";
+            if (filteredEvents.length === 0) {
+                container.innerHTML = "<p style='grid-column: 1 / -1; text-align: center;'>No events found.</p>";
+                return;
+            }
+
+            filteredEvents.forEach(event => {
+                const card = document.createElement('div');
+                card.className = 'event-card';
+                card.innerHTML = `
+                    <div class="event-title">${event.title}</div>
+                    <div class="event-info">
+                        <div class="event-date">📅 ${event.date}</div>
+                        <div class="event-location">📍 ${event.location}</div>
+                        <div class="event-category">🏷️ ${event.category}</div>
+                        ${event.price !== undefined ? `<div class="event-price">₹${event.price}</div>` : ''}
+                    </div>
+                    <button class="view-btn">View Details</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function applyFilters() {
+            const keyword = searchInput.value.toLowerCase();
+            const selectedDate = dateFilter.value;
+            const selectedCategory = categoryFilter.value;
+
+            const filtered = allEvents.filter(event => {
+                const matchesKeyword =
+                    event.title.toLowerCase().includes(keyword) ||
+                    event.location.toLowerCase().includes(keyword);
+
+                const matchesDate = selectedDate ? event.date >= selectedDate : true;
+                const matchesCategory = selectedCategory ? event.category === selectedCategory : true;
+
+                return matchesKeyword && matchesDate && matchesCategory;
+            });
+
+            displayEvents(filtered);
+        }
+
+        fetch('/get_tickets.php') // Adjust the path if necessary
+            .then(response => response.json())
+            .then(data => {
+                // Combine the fetched ticket data with the example events
+                allEvents = [...exampleEvents, ...data];
+                // Initial display of all events
+                displayEvents(allEvents); // This line ensures initial display
+            })
+            .catch(error => {
+                console.error('Error fetching ticket data:', error);
+            });
+
+        // Event listeners for filters
+        searchInput.addEventListener('input', applyFilters);
+        dateFilter.addEventListener('change', applyFilters);
+        categoryFilter.addEventListener('change', applyFilters);
+
+        // (Initial display is now handled after fetching data)
+    </script>
+
+</body>
+</html>
