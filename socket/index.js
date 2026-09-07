@@ -216,6 +216,12 @@ export const emitToUser = (userId, event, data) => {
   }
 };
 
+export const emitToConversation = (conversationId, event, data) => {
+  if (global.io) {
+    global.io.to(`conversation:${conversationId}`).emit(event, data);
+  }
+};
+
 export const emitToAll = (event, data) => {
   if (global.io) {
     global.io.emit(event, data);
@@ -225,5 +231,6 @@ export const emitToAll = (event, data) => {
 export default {
   initializeSocket,
   emitToUser,
+  emitToConversation,
   emitToAll,
 };
