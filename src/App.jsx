@@ -43,7 +43,6 @@ import PublicRoute from './components/PublicRoute';
 import AdminRoute from './components/AdminRoute';
 import SellerRoute from './components/SellerRoute';
 import LoadingScreen from './components/LoadingScreen';
-import CustomCursor from './components/CustomCursor';
 import InteractiveBackground from './components/InteractiveBackground';
 
 function App() {
@@ -76,7 +75,6 @@ function App() {
   return (
     <>
       <InteractiveBackground />
-      <CustomCursor />
       <Routes>
       {/* Public Routes */}
       <Route element={<MainLayout />}>
