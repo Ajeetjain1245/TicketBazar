@@ -33,15 +33,17 @@ TicketBazar/
 ├── controllers/         # Express API controllers (Auth, Tickets, Orders, Admin, Chat)
 ├── middleware/          # JWT auth, error handler, and Multer upload middleware
 ├── models/              # Mongoose data models (User, Ticket, Order, Chat, Message, etc.)
+├── public/              # Static assets (logo, banner, icons)
 ├── routes/              # Express API route declarations
+├── scripts/             # Database and utility maintenance scripts
 ├── socket/              # Real-time Socket.IO event handlers
 ├── src/                 # React frontend application
 │   ├── components/      # Reusable UI components (Navbar, EscrowStepper, TicketCard, etc.)
 │   ├── context/         # Zustand global stores (authStore, socketStore)
 │   ├── pages/           # Application views (Home, BrowseTickets, TicketDetails, Dashboard, Admin)
 │   └── utils/           # Frontend helper utilities and API client
+├── tests/               # Automated test suites and verification scripts
 ├── utils/               # Backend utilities (cronJobs, email templates, privacyFilter)
-├── archive/             # Archived legacy prototype files (PHP, Flask, static HTML)
 ├── server.js            # Express & Socket.IO server entry point
 └── package.json         # Unified dependency & script configuration
 ```
