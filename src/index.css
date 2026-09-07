@@ -147,12 +147,6 @@
   body {
     @apply font-sans antialiased text-slate-100 bg-slate-950;
     overflow-x: hidden;
-    cursor: none;
-  }
-
-  /* Hide default cursor on interactive elements */
-  a, button, [role="button"], input, textarea, select, [data-cursor-hover] {
-    cursor: none;
   }
 
   h1, h2, h3, h4, h5, h6 {
