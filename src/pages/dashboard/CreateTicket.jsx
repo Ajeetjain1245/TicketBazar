@@ -59,6 +59,13 @@ const SEAT_CLASSES = [
   { value: 'premium', label: 'Premium' },
 ];
 
+const DELIVERY_METHODS = [
+  { value: 'e_ticket', label: 'E-Ticket / PDF', desc: 'Direct upload or PDF transfer', icon: '📄' },
+  { value: 'app_transfer', label: 'In-App Transfer', desc: 'BookMyShow / Ticketmaster transfer', icon: '📲' },
+  { value: 'physical', label: 'Courier / Wristband', desc: 'Shipped with courier tracking code', icon: '📦' },
+  { value: 'meetup', label: 'Venue Meetup', desc: 'In-person handover on event day', icon: '🤝' },
+];
+
 const CreateTicket = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
@@ -124,6 +131,7 @@ const CreateTicket = () => {
     seatNumber: '',
     seatClass: '',
     category: 'entertainment',
+    deliveryMethod: 'e_ticket',
     description: '',
     // Step 3 - Pricing
     originalPrice: '',
@@ -565,6 +573,40 @@ const CreateTicket = () => {
                 </option>
               ))}
             </select>
+          </div>
+        </div>
+
+        {/* Delivery Method */}
+        <div>
+          <label className="sell-label">
+            Delivery Method <span className="text-red-400">*</span>
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+            {DELIVERY_METHODS.map((method) => {
+              const isSelected = formData.deliveryMethod === method.value;
+              return (
+                <button
+                  key={method.value}
+                  type="button"
+                  onClick={() => updateField('deliveryMethod', method.value)}
+                  className={`p-3.5 rounded-2xl border text-left transition-all flex items-start space-x-3 ${
+                    isSelected
+                      ? 'bg-indigo-500/15 border-indigo-500 text-slate-100 shadow-md shadow-indigo-500/10 ring-1 ring-indigo-500/30'
+                      : 'bg-slate-800/40 border-slate-700 text-slate-400 hover:border-slate-600 hover:bg-slate-800/70'
+                  }`}
+                >
+                  <span className="text-2xl shrink-0">{method.icon}</span>
+                  <div>
+                    <div className={`text-sm font-bold ${isSelected ? 'text-indigo-400' : 'text-slate-200'}`}>
+                      {method.label}
+                    </div>
+                    <div className="text-xs text-slate-400 mt-0.5 leading-snug">
+                      {method.desc}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
 

@@ -102,13 +102,14 @@ const orderSchema = new mongoose.Schema(
       transferredAt: Date,
       transferMethod: String,
       transferProof: String,
+      trackingNumber: String,
       notes: String,
     },
     // Delivery information
     deliveryMethod: {
       type: String,
-      enum: ['digital', 'physical', 'meetup'],
-      default: 'digital',
+      enum: ['e_ticket', 'app_transfer', 'physical', 'meetup', 'digital'],
+      default: 'e_ticket',
     },
     deliveryAddress: {
       street: String,

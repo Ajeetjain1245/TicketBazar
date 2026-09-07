@@ -116,6 +116,7 @@ export const ordersAPI = {
   getMyOrders: () => api.get('/orders/my-orders'),
   getSellerOrders: () => api.get('/orders/seller-orders'),
   updateTransfer: (id, data) => api.put(`/orders/${id}/transfer`, data),
+  confirmReceipt: (id) => api.put(`/orders/${id}/confirm-receipt`),
   cancel: (id, data) => api.put(`/orders/${id}/cancel`, data),
   openDispute: (id, data) => api.post(`/orders/${id}/dispute`, data),
 };

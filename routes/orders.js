@@ -6,6 +6,7 @@ import {
   getSellerOrders,
   getOrderById,
   updateTransferStatus,
+  confirmReceipt,
   cancelOrder,
   openDispute,
   getAllOrders,
@@ -62,6 +63,13 @@ router.get('/:id', authenticate, getOrderById);
  * @access  Private (Seller)
  */
 router.put('/:id/transfer', authenticate, authorizeSeller, updateTransferStatus);
+
+/**
+ * @route   PUT /api/orders/:id/confirm-receipt
+ * @desc    Buyer confirms ticket receipt and releases escrow
+ * @access  Private (Buyer)
+ */
+router.put('/:id/confirm-receipt', authenticate, confirmReceipt);
 
 /**
  * @route   PUT /api/orders/:id/cancel

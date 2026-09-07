@@ -100,6 +100,12 @@ const ticketSchema = new mongoose.Schema(
         enum: ['image', 'pdf'],
       },
     },
+    // Delivery Method
+    deliveryMethod: {
+      type: String,
+      enum: ['e_ticket', 'app_transfer', 'physical', 'meetup'],
+      default: 'e_ticket',
+    },
     // Seller Information
     seller: {
       type: mongoose.Schema.Types.ObjectId,

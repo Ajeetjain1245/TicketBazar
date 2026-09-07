@@ -351,7 +351,7 @@ export const getOrderById = asyncHandler(async (req, res) => {
  * @access  Private (Seller)
  */
 export const updateTransferStatus = asyncHandler(async (req, res) => {
-  const { status, notes } = req.body;
+  const { transferStatus, status, notes, transferMethod, trackingNumber, transferProof } = req.body;
 
   const order = await Order.findById(req.params.id);
 
@@ -359,27 +359,41 @@ export const updateTransferStatus = asyncHandler(async (req, res) => {
     throw new AppError('Order not found', 404);
   }
 
-  // Only seller can update transfer
-  if (order.seller.toString() !== req.user._id.toString()) {
-    throw new AppError('Not authorized', 403);
+  // Only seller or admin can update transfer
+  if (order.seller.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+    throw new AppError('Not authorized to update this order transfer', 403);
   }
 
-  order.transferStatus = status;
+  const effectiveStatus = transferStatus || status || 'completed';
+  order.transferStatus = effectiveStatus;
+
+  if (!order.transferDetails) {
+    order.transferDetails = {};
+  }
+
   if (notes) order.transferDetails.notes = notes;
+  if (transferMethod) order.transferDetails.transferMethod = transferMethod;
+  if (trackingNumber) order.transferDetails.trackingNumber = trackingNumber;
+  if (transferProof) order.transferDetails.transferProof = transferProof;
 
-  if (status === 'completed') {
+  if (effectiveStatus === 'completed') {
     order.transferDetails.transferredAt = new Date();
-    order.transferDetails.transferMethod = req.body.transferMethod || 'digital';
 
-    // Complete the order
-    await order.completeOrder();
-
-    // Notify buyer
+    // Notify buyer in DB
     await Notification.create({
       recipient: order.buyer,
-      type: 'order_completed',
-      title: 'Ticket Transferred',
-      message: `Your ticket for order #${order.orderNumber} has been transferred.`,
+      type: 'transfer_completed',
+      title: 'Ticket Transferred by Seller 🎫',
+      message: `Seller has transferred your ticket for order #${order.orderNumber}. Please inspect and confirm receipt to release escrow funds.`,
+      relatedOrder: order._id,
+      actionUrl: `/dashboard/orders/${order._id}`,
+    });
+
+    // Real-time socket notification to buyer
+    emitToUser(order.buyer.toString(), 'notification', {
+      type: 'transfer_completed',
+      title: 'Ticket Transferred by Seller 🎫',
+      message: `Seller has transferred your ticket for order #${order.orderNumber}. Please inspect and confirm receipt.`,
       relatedOrder: order._id,
     });
   }
@@ -388,7 +402,72 @@ export const updateTransferStatus = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     success: true,
-    message: 'Transfer status updated',
+    message: 'Transfer status updated successfully',
+    data: { order },
+  });
+});
+
+/**
+ * @desc    Buyer confirms ticket receipt and releases escrow funds
+ * @route   PUT /api/orders/:id/confirm-receipt
+ * @access  Private (Buyer)
+ */
+export const confirmReceipt = asyncHandler(async (req, res) => {
+  const order = await Order.findById(req.params.id);
+
+  if (!order) {
+    throw new AppError('Order not found', 404);
+  }
+
+  // Only buyer or admin can confirm receipt
+  if (order.buyer.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
+    throw new AppError('Only the buyer can confirm ticket receipt', 403);
+  }
+
+  if (order.status === 'completed') {
+    return res.status(200).json({
+      success: true,
+      message: 'Order is already completed',
+      data: { order },
+    });
+  }
+
+  // Complete the order & release escrow
+  await order.completeOrder();
+
+  // Notify seller in DB
+  await Notification.create({
+    recipient: order.seller,
+    type: 'escrow_released',
+    title: 'Escrow Funds Released! 💰',
+    message: `Buyer confirmed receipt for order #${order.orderNumber}. ₹${order.sellerAmount} has been released to your account.`,
+    relatedOrder: order._id,
+    actionUrl: `/dashboard/orders/${order._id}`,
+  });
+
+  // Real-time notification to seller
+  emitToUser(order.seller.toString(), 'notification', {
+    type: 'escrow_released',
+    title: 'Escrow Funds Released! 💰',
+    message: `Buyer confirmed receipt for order #${order.orderNumber}. ₹${order.sellerAmount} has been released.`,
+    relatedOrder: order._id,
+  });
+
+  // Notify admin
+  const admin = await User.findOne({ role: 'admin' });
+  if (admin) {
+    await Notification.create({
+      recipient: admin._id,
+      type: 'system',
+      title: 'Order Completed',
+      message: `Order #${order.orderNumber} successfully completed and verified.`,
+      relatedOrder: order._id,
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'Receipt confirmed successfully! Escrow funds released to seller.',
     data: { order },
   });
 });
@@ -425,11 +504,13 @@ export const cancelOrder = asyncHandler(async (req, res) => {
 
   // Restore ticket quantity
   const ticket = await Ticket.findById(order.ticket);
-  ticket.quantity += (order.quantity || 1);
-  ticket.status = 'available';
-  ticket.buyer = null;
-  ticket.soldAt = null;
-  await ticket.save();
+  if (ticket) {
+    ticket.quantity += (order.quantity || 1);
+    ticket.status = 'available';
+    ticket.buyer = null;
+    ticket.soldAt = null;
+    await ticket.save();
+  }
 
   // Notify other party
   const notifyUserId =
@@ -467,31 +548,50 @@ export const openDispute = asyncHandler(async (req, res) => {
   }
 
   // Only buyer can open dispute
-  if (order.buyer.toString() !== req.user._id.toString()) {
+  if (order.buyer.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
     throw new AppError('Only buyer can open a dispute', 403);
-  }
-
-  if (order.status !== 'confirmed') {
-    throw new AppError('Can only dispute confirmed orders', 400);
   }
 
   await order.initiateDispute({ reason, description });
 
-  // Notify admin (in a real app, notify all admins)
+  // Notify admin
   const admin = await User.findOne({ role: 'admin' });
   if (admin) {
     await Notification.create({
       recipient: admin._id,
       type: 'dispute_opened',
-      title: 'New Dispute',
-      message: `A dispute has been opened for order #${order.orderNumber}`,
+      title: '⚠️ Escrow Dispute Opened',
+      message: `Buyer opened a dispute for order #${order.orderNumber}: ${reason}`,
+      relatedOrder: order._id,
+      actionUrl: `/admin/orders`,
+    });
+    emitToUser(admin._id.toString(), 'notification', {
+      type: 'dispute_opened',
+      title: '⚠️ Escrow Dispute Opened',
+      message: `Buyer opened a dispute for order #${order.orderNumber}`,
       relatedOrder: order._id,
     });
   }
 
+  // Notify seller
+  await Notification.create({
+    recipient: order.seller,
+    type: 'dispute_opened',
+    title: '⚠️ Order Disputed by Buyer',
+    message: `Buyer reported an issue on order #${order.orderNumber}: ${reason}. Admin mediation initiated.`,
+    relatedOrder: order._id,
+    actionUrl: `/dashboard/orders/${order._id}`,
+  });
+  emitToUser(order.seller.toString(), 'notification', {
+    type: 'dispute_opened',
+    title: '⚠️ Order Disputed by Buyer',
+    message: `Buyer reported an issue on order #${order.orderNumber}.`,
+    relatedOrder: order._id,
+  });
+
   res.status(200).json({
     success: true,
-    message: 'Dispute opened successfully',
+    message: 'Dispute submitted. Admin has been notified for escrow review.',
     data: { order },
   });
 });
