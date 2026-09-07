@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import { Conversation, Message, User, Ticket } from '../models/index.js';
 import { asyncHandler, AppError } from '../middleware/errorHandler.js';
-import cloudinary from '../config/cloudinary.js';
-
+import cloudinary, { uploadBufferToCloudinary } from '../config/cloudinary.js';
+import { emitToConversation, emitToUser } from '../socket/index.js';
 import { maskSensitiveInfo } from '../utils/privacyFilter.js';
 
 /**
@@ -134,13 +134,11 @@ export const sendMessage = asyncHandler(async (req, res) => {
   let fileName = null;
 
   if (req.file) {
-    const result = await new Promise((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        { folder: 'ticket-bazar/chat', resource_type: 'auto' },
-        (error, result) => { if (error) reject(error); else resolve(result); }
-      );
-      uploadStream.end(req.file.buffer);
-    });
+    const result = await uploadBufferToCloudinary(
+      req.file.buffer,
+      { folder: 'ticket-bazar/chat', resource_type: 'auto' },
+      req.file.originalname
+    );
     fileUrl = result.secure_url;
     fileName = req.file.originalname;
   }

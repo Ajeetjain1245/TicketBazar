@@ -1,7 +1,7 @@
 import { Ticket, User, Notification } from '../models/index.js';
 import { asyncHandler, AppError } from '../middleware/errorHandler.js';
 import { emitToAll, emitToUser } from '../socket/index.js';
-import cloudinary from '../config/cloudinary.js';
+import cloudinary, { uploadBufferToCloudinary } from '../config/cloudinary.js';
 import { body, validationResult } from 'express-validator';
 
 /**
@@ -69,32 +69,24 @@ export const createTicket = asyncHandler(async (req, res) => {
     });
   }
 
-  // Upload images to Cloudinary (with error guarding)
+  // Upload images to Cloudinary (with fallback for local demo)
   const images = [];
   if (req.files && req.files.length > 0) {
     for (const file of req.files) {
       try {
-        const result = await new Promise((resolve, reject) => {
-          const uploadStream = cloudinary.uploader.upload_stream(
-            {
-              folder: 'ticket-bazar/tickets',
-              resource_type: 'image',
-            },
-            (error, result) => {
-              if (error) reject(error);
-              else resolve(result);
-            }
-          );
-          uploadStream.end(file.buffer);
-        });
+        const result = await uploadBufferToCloudinary(file.buffer, {
+          folder: 'ticket-bazar/tickets',
+          resource_type: 'image',
+        }, file.originalname);
 
-        images.push({
-          url: result.secure_url,
-          publicId: result.public_id,
-        });
+        if (result && result.secure_url) {
+          images.push({
+            url: result.secure_url,
+            publicId: result.public_id,
+          });
+        }
       } catch (uploadError) {
-        console.error('Cloudinary upload error:', uploadError);
-        // Continue without this image if upload fails
+        console.error('Image upload error:', uploadError);
       }
     }
   }
@@ -277,21 +269,21 @@ export const updateTicket = asyncHandler(async (req, res) => {
     // Upload new images
     const images = [];
     for (const file of req.files) {
-      const result = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: 'ticket-bazar/tickets' },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        );
-        uploadStream.end(file.buffer);
-      });
+      try {
+        const result = await uploadBufferToCloudinary(file.buffer, {
+          folder: 'ticket-bazar/tickets',
+          resource_type: 'image',
+        }, file.originalname);
 
-      images.push({
-        url: result.secure_url,
-        publicId: result.public_id,
-      });
+        if (result && result.secure_url) {
+          images.push({
+            url: result.secure_url,
+            publicId: result.public_id,
+          });
+        }
+      } catch (uploadError) {
+        console.error('Image upload error:', uploadError);
+      }
     }
     updates.images = images;
   }
